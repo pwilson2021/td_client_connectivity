@@ -14,7 +14,7 @@ public class Portfolio {
             strategy = GenerationType.AUTO
     )
     private int id;
-    private String ticker;
+    private String name;
 
     @OneToMany(mappedBy = "portfolio")
     private Set<Order> orders;
@@ -24,6 +24,10 @@ public class Portfolio {
     private User user;
 
     public Portfolio(String ticker) {
-        this.ticker = ticker;
+        this.name = ticker;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -1,6 +1,7 @@
 package turntabl.io.client_connectivity.order;
 
 import turntabl.io.client_connectivity.portfolio.Portfolio;
+import turntabl.io.client_connectivity.product.Product;
 import turntabl.io.client_connectivity.user.User;
 
 import javax.persistence.*;
@@ -49,6 +50,9 @@ public class Order {
     @JoinColumn(name = "portfolio_id", referencedColumnName = "id")
     private Portfolio portfolio;
 
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
 
     public Order(int product_id, double price, int quantity, String order_type, String date_created, String order_status) {
         this.product_id = product_id;
@@ -71,5 +75,33 @@ public class Order {
 
     public Order() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getOrder_status() {
+        return order_status;
+    }
+
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
     }
 }
