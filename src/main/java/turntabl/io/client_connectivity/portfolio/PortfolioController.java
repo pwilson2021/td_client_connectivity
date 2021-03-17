@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/portfolio")
+@RequestMapping(path = "api/portfolios")
 public class PortfolioController {
     private final PortfolioService portfolioService;
 

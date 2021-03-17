@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(
-        name = "products",
+        name="Product",
         uniqueConstraints = {
                 @UniqueConstraint(name = "ticker", columnNames = "ticker")
         })
@@ -24,8 +24,8 @@ public class Product {
     )
     private String ticker;
 
-    @OneToMany(mappedBy = "product")
-    private Set<Order> orders;
+    @OneToOne(mappedBy = "product")
+    private Order order;
 
     public Product( String ticker) {
         this.ticker = ticker;
