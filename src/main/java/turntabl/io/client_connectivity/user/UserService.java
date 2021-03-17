@@ -1,6 +1,7 @@
 package turntabl.io.client_connectivity.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import turntabl.io.client_connectivity.order.Order;
 import turntabl.io.client_connectivity.product.Product;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Service
 public class UserService {
     private final UserRepository userRepository;
 
