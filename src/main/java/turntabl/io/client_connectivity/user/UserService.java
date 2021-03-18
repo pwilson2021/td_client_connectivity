@@ -63,4 +63,14 @@ public class UserService {
         }
     }
 
+
+    public boolean findIfUserExists(String email) {
+        Optional<User> userOptional =  userRepository.findUserByEmail(email);
+        return userOptional.isPresent();
+    }
+
+    public User findUserByMail (String email) {
+        Optional<User> userOptional =  userRepository.findUserByEmail(email);
+        return userOptional.get();
+    }
 }
