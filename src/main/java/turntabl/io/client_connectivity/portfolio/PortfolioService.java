@@ -39,5 +39,10 @@ public class PortfolioService {
             portfolio.setName(name);
         }
     }
+
+    public Portfolio findPortfolioById(int portfolio_id) {
+        Optional<Portfolio> portfolio = portfolioRepository.findById(portfolio_id);
+        return portfolio.get();
+    }
 }
 

@@ -1,5 +1,6 @@
 package turntabl.io.client_connectivity.portfolio;
 
+
 import turntabl.io.client_connectivity.order.Order;
 import turntabl.io.client_connectivity.user.User;
 
@@ -25,12 +26,26 @@ public class Portfolio {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public Portfolio(String ticker) {
-        this.name = ticker;
+    public Portfolio() {}
+
+    public Portfolio(String name) {
+        this.name = name;
+    }
+
+    public Portfolio(String name, User user) {
+        this.name = name;
+        this.user = user;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
