@@ -1,12 +1,14 @@
 package turntabl.io.client_connectivity.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Service
 public class ProductService {
     private final ProductRepository productRepository;
 
@@ -47,5 +49,10 @@ public class ProductService {
             }
             product.setTicker(ticker);
         }
+    }
+
+    public Product findProductById(int product_id) {
+        Optional<Product> product = productRepository.findById(product_id);
+        return product.get();
     }
 }

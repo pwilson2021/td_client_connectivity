@@ -1,14 +1,15 @@
 package turntabl.io.client_connectivity.order;
 
+import turntabl.io.client_connectivity.DateAudit;
 import turntabl.io.client_connectivity.portfolio.Portfolio;
 import turntabl.io.client_connectivity.product.Product;
 import turntabl.io.client_connectivity.user.User;
 
 import javax.persistence.*;
 
-@Entity(name= "Order")
-@Table(name = "Orders")
-public class Order {
+@Entity(name = "Order")
+@Table(name="porders")
+public class Order extends DateAudit {
     @Id
     @SequenceGenerator(
             name = "order_sequence",
@@ -23,22 +24,10 @@ public class Order {
 
     @Column(name = "id", updatable = false, nullable = false)
     private int id;
-
-    @Column(
-            name = "product_id",
-            updatable = false,
-            nullable = false
-    )
-    private int product_id;
-
-
     private double price;
     private int quantity;
     private String order_type;
 
-    @Column(name = "date_created", updatable = false, nullable = false
-    )
-    private String date_created;
     private String order_status;
 
 
@@ -50,27 +39,18 @@ public class Order {
     @JoinColumn(name = "portfolio_id", referencedColumnName = "id")
     private Portfolio portfolio;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
-    public Order(int product_id, double price, int quantity, String order_type, String date_created, String order_status) {
-        this.product_id = product_id;
+    public Order(double price, int quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
         this.price = price;
         this.quantity = quantity;
         this.order_type = order_type;
-        this.date_created = date_created;
         this.order_status = order_status;
-    }
-
-    public Order(int product_id, double price, int quantity, String order_type, String date_created, String order_status, User user_id) {
-        this.product_id = product_id;
-        this.price = price;
-        this.quantity = quantity;
-        this.order_type = order_type;
-        this.date_created = date_created;
-        this.order_status = order_status;
-        this.user = user_id;
+        this.user = user;
+        this.portfolio = portfolio;
+        this.product = product;
     }
 
     public Order() {

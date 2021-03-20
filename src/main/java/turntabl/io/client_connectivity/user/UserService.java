@@ -1,6 +1,7 @@
 package turntabl.io.client_connectivity.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import turntabl.io.client_connectivity.order.Order;
 import turntabl.io.client_connectivity.product.Product;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Service
 public class UserService {
     private final UserRepository userRepository;
 
@@ -59,6 +61,22 @@ public class UserService {
             }
             user.setEmail(email);
         }
+    }
+
+
+    public boolean findIfUserExists(String email) {
+        Optional<User> userOptional =  userRepository.findUserByEmail(email);
+        return userOptional.isPresent();
+    }
+
+    public User findUserByMail (String email) {
+        Optional<User> userOptional =  userRepository.findUserByEmail(email);
+        return userOptional.get();
+    }
+
+    public User findUserById (int id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        return userOptional.get();
     }
 
 }

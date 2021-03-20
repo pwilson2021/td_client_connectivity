@@ -1,12 +1,14 @@
 package turntabl.io.client_connectivity.portfolio;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Service
 public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
 
@@ -36,6 +38,11 @@ public class PortfolioService {
         if (name != null) {
             portfolio.setName(name);
         }
+    }
+
+    public Portfolio findPortfolioById(int portfolio_id) {
+        Optional<Portfolio> portfolio = portfolioRepository.findById(portfolio_id);
+        return portfolio.get();
     }
 }
 

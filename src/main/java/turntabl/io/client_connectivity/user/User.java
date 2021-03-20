@@ -1,20 +1,26 @@
 package turntabl.io.client_connectivity.user;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import turntabl.io.client_connectivity.DateAudit;
 import turntabl.io.client_connectivity.order.Order;
 import turntabl.io.client_connectivity.portfolio.Portfolio;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
+
 
 @Entity(name = "User")
 @Table(
-        name = "Users",
+        name="Users",
         uniqueConstraints = {
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email")
         }
 )
-public class User {
+public class User extends DateAudit {
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
 
@@ -38,29 +44,20 @@ public class User {
     @Column(name= "funds", nullable = false)
     private double funds;
 
-    @Column(name = "date_created", nullable = false)
-    private LocalDate date_created;
+    @Column(name = "authority", nullable = false)
+    private String authority = "user";
 
-    @Column(name = "is_admin", nullable = false)
-    private boolean is_admin;
+    public User () {}
 
-
-
-    public User(String first_name, String last_name, String password, double funds, LocalDate date_created, boolean is_admin, String email) {
+    public User(String first_name, String last_name, String password, String email) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.password = password;
-        this.funds = funds;
-        this.date_created = date_created;
-        this.is_admin = is_admin;
         this.email = email;
     }
 
 
-    public User() {
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -104,20 +101,12 @@ public class User {
         this.funds = funds;
     }
 
-    public LocalDate getDate_created() {
-        return date_created;
+    public Date getDate_created() {
+        return created_at;
     }
 
-    public void setDate_created(LocalDate date_created) {
-        this.date_created = date_created;
-    }
-
-    public boolean isIs_admin() {
-        return is_admin;
-    }
-
-    public void setIs_admin(boolean is_admin) {
-        this.is_admin = is_admin;
+    public Set<Portfolio> getPortfolio() {
+        return portfolio;
     }
 
     @OneToMany(mappedBy = "user")
@@ -135,8 +124,8 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", funds=" + funds +
-                ", date_created=" + date_created +
-                ", is_admin=" + is_admin +
+                ", date_created=" + created_at +
+                ", authority=" + authority +
                 '}';
     }
 }
