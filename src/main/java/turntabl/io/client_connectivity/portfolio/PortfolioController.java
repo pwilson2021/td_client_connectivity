@@ -30,6 +30,11 @@ public class PortfolioController {
         portfolioService.addNewPortfolio(portfolio);
     }
 
+    @GetMapping(path = "{portfolioId}")
+    public void fetchPortfolioInfo (@PathVariable("portfolioId") Integer portfolioId) {
+        portfolioService.fetchStock(portfolioId);
+    }
+
     @DeleteMapping(path = "{portfolioId}")
     public void deletePortfolio(@PathVariable("portfolioId") Integer portfolioId) { portfolioService.deletePortfolio(portfolioId); }
 

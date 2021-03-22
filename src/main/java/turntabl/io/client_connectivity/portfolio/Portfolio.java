@@ -48,4 +48,12 @@ public class Portfolio {
     public String getName() {
         return name;
     }
+
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
+    public User getUser() {
+        return user;
+    }
 }
