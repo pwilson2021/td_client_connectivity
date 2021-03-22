@@ -22,23 +22,28 @@ public class OrderController {
     private final PortfolioService portfolioService;
     private final ProductService productService;
 
-    @Autowired
+    //@Autowired
     private RedisTemplate template;
-    @Autowired
+    //@Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
   
     @Autowired
-    public OrderController(OrderService orderService,
+    public OrderController(
+            OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
-                           ProductService productService
-                           ) {
+                           ProductService productService,
+                           RedisTemplate redisTemplate
+                           //ChannelTopic channelTopic
+    ) {
         this.orderService = orderService;
         this.userService = userService;
         this.portfolioService = portfolioService;
         this.productService = productService;
+        this.template = redisTemplate;
+        //this.topic = channelTopic;
     }
 
     @GetMapping

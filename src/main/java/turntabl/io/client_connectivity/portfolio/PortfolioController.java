@@ -15,9 +15,8 @@ import java.util.List;
 @RequestMapping(path = "api/portfolios")
 public class PortfolioController {
     private final PortfolioService portfolioService;
-    @Autowired
+    //@Autowired
     private RedisTemplate template;
-    @Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
@@ -25,9 +24,10 @@ public class PortfolioController {
     private final UserService userService;
 
     @Autowired
-    public PortfolioController(PortfolioService portfolioService, UserService userService) {
+    public PortfolioController(PortfolioService portfolioService, UserService userService, RedisTemplate redisTemplate) {
         this.portfolioService = portfolioService;
         this.userService = userService;
+        this.template = redisTemplate;
     }
 
     @GetMapping
