@@ -5,4 +5,5 @@ import javax.persistence.Table;
 
 
 public class Stock {
+    private int id;
 }
