@@ -1,11 +1,14 @@
 package turntabl.io.client_connectivity.portfolio;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.web.bind.annotation.*;
 import turntabl.io.client_connectivity.reporting.ReportingModel;
-
+import turntabl.io.client_connectivity.user.User;
+import turntabl.io.client_connectivity.user.UserRepository;
+import turntabl.io.client_connectivity.user.UserService;
 import java.util.List;
 
 @RestController
@@ -19,8 +22,13 @@ public class PortfolioController {
 
     private ReportingModel report;
 
+    private final UserService userService;
+
     @Autowired
-    public PortfolioController(PortfolioService portfolioService) {this.portfolioService = portfolioService; }
+    public PortfolioController(PortfolioService portfolioService, UserService userService) {
+        this.portfolioService = portfolioService;
+        this.userService = userService;
+    }
 
     @GetMapping
     public List<Portfolio> getPortfolio() { return portfolioService.getPortfolio(); }
@@ -30,7 +38,17 @@ public class PortfolioController {
         portfolioService.addNewPortfolio(portfolio);
         report.setTitle("client connectivity: portfolio");
         report.setMsg("New portfolio created");
-        template.convertAndSend(topic.getTopic(), report);
+        template.convertAndSend(topic.getTopic(), report); }
+
+      public void registerNewPortfolio(@RequestParam(name = "name") String portfolioName, @RequestParam(name= "user_id") Integer user_id) {
+        User user = userService.findUserById(user_id);
+        Portfolio portfolio = new Portfolio(portfolioName, user);
+        portfolioService.addNewPortfolio(portfolio);
+    }
+
+    @GetMapping(path = "{portfolioId}")
+    public void fetchPortfolioInfo (@PathVariable("portfolioId") Integer portfolioId) {
+        portfolioService.fetchStock(portfolioId);
     }
 
     @DeleteMapping(path = "{portfolioId}")

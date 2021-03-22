@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
+
 @Entity(name = "User")
 @Table(
         name="Users",
@@ -46,6 +47,8 @@ public class User extends DateAudit {
     @Column(name = "authority", nullable = false)
     private String authority = "user";
 
+    public User () {}
+
     public User(String first_name, String last_name, String password, String email) {
         this.first_name = first_name;
         this.last_name = last_name;
@@ -53,9 +56,6 @@ public class User extends DateAudit {
         this.email = email;
     }
 
-
-    public User() {
-    }
 
     public Integer getId() {
         return id;

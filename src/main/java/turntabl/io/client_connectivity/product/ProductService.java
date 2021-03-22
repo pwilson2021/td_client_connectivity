@@ -50,4 +50,9 @@ public class ProductService {
             product.setTicker(ticker);
         }
     }
+
+    public Product findProductById(int product_id) {
+        Optional<Product> product = productRepository.findById(product_id);
+        return product.get();
+    }
 }

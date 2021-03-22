@@ -32,6 +32,8 @@ public class UserController {
         report.setTitle("client connectivity: User");
         report.setMsg("New user registered");
         template.convertAndSend(topic.getTopic(), report);
+        userService.addNewUser(user);
+        return "User registration succesful";
     }
 
     @DeleteMapping(path = "{userId}")

@@ -1,14 +1,17 @@
 package turntabl.io.client_connectivity.order;
 
+import turntabl.io.client_connectivity.DateAudit;
 import turntabl.io.client_connectivity.portfolio.Portfolio;
 import turntabl.io.client_connectivity.product.Product;
+import turntabl.io.client_connectivity.trade.Trade;
 import turntabl.io.client_connectivity.user.User;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "Order")
-@Table(name="orders")
-public class Order {
+@Table(name="porders")
+public class Order extends DateAudit {
     @Id
     @SequenceGenerator(
             name = "order_sequence",
@@ -27,9 +30,6 @@ public class Order {
     private int quantity;
     private String order_type;
 
-    @Column(name = "date_created", updatable = false, nullable = false
-    )
-    private String date_created;
     private String order_status;
 
 
@@ -45,21 +45,18 @@ public class Order {
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
-    public Order(double price, int quantity, String order_type, String date_created, String order_status) {
+    @OneToMany(mappedBy = "order")
+    private Set<Trade> trades;
+
+    public Order(double price, int quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
         this.price = price;
         this.quantity = quantity;
         this.order_type = order_type;
-        this.date_created = date_created;
         this.order_status = order_status;
+        this.user = user;
+        this.portfolio = portfolio;
+        this.product = product;
     }
-
-//    public Order(double price, int quantity, String order_type, String date_created, String order_status) {
-//        this.price = price;
-//        this.quantity = quantity;
-//        this.order_type = order_type;
-//        this.date_created = date_created;
-//        this.order_status = order_status;
-//    }
 
     public Order() {
 
@@ -91,5 +88,21 @@ public class Order {
 
     public void setOrder_status(String order_status) {
         this.order_status = order_status;
+    }
+
+    public String getOrder_type() {
+        return order_type;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Portfolio getPortfolio() {
+        return portfolio;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 }
