@@ -1,10 +1,13 @@
 package turntabl.io.client_connectivity.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.web.bind.annotation.*;
 import turntabl.io.client_connectivity.portfolio.Portfolio;
 import turntabl.io.client_connectivity.portfolio.PortfolioService;
 import turntabl.io.client_connectivity.product.Product;
+import turntabl.io.client_connectivity.reporting.ReportingModel;
 import turntabl.io.client_connectivity.product.ProductService;
 import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
@@ -20,6 +23,14 @@ public class OrderController {
     private final ProductService productService;
 
     @Autowired
+    private RedisTemplate template;
+    @Autowired
+    private ChannelTopic topic;
+
+    private ReportingModel report;
+  
+    @Autowired
+    public OrderController(OrderService orderService) {
     public OrderController(OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
@@ -35,6 +46,12 @@ public class OrderController {
     public List<Order> getOrders() { return orderService.getOrders() ;}
 
     @PostMapping
+    public void registerNewOrder(@RequestBody Order order) {
+        orderService.addNewOrder(order);
+        report.setTitle("client connectivity: Order");
+        report.setMsg("New Order created");
+        template.convertAndSend(topic.getTopic(), report);
+    }
     public void registerNewOrder(
             @RequestParam(name="price") Double price,
             @RequestParam(name="quantity") int quantity,
@@ -52,7 +69,12 @@ public class OrderController {
     }
 
     @DeleteMapping(path = "{orderId}")
-    public void deleteOrder(@PathVariable("orderId") Integer orderId) {orderService.deleteOrder(orderId);}
+    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
+        orderService.deleteOrder(orderId);
+        report.setTitle("client connectivity: Order");
+        report.setMsg("Order deleted.Order ID "+ orderId);
+        template.convertAndSend(topic.getTopic(), report);
+    }
 
 
     public void updateOrder(
