@@ -1,8 +1,11 @@
 package turntabl.io.client_connectivity.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.web.bind.annotation.*;
 import turntabl.io.client_connectivity.product.Product;
+import turntabl.io.client_connectivity.reporting.ReportingModel;
 
 import java.util.List;
 
@@ -10,6 +13,12 @@ import java.util.List;
 @RequestMapping(path = "api/orders")
 public class OrderController {
     private final OrderService orderService;
+    @Autowired
+    private RedisTemplate template;
+    @Autowired
+    private ChannelTopic topic;
+
+    private ReportingModel report;
     @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
@@ -19,11 +28,20 @@ public class OrderController {
     public List<Order> getOrders() { return orderService.getOrders() ;}
 
     @PostMapping
-    public void registerNewOrder(@RequestBody Order order) {orderService.addNewOrder(order);
+    public void registerNewOrder(@RequestBody Order order) {
+        orderService.addNewOrder(order);
+        report.setTitle("client connectivity: Order");
+        report.setMsg("New Order created");
+        template.convertAndSend(topic.getTopic(), report);
     }
 
     @DeleteMapping(path = "{orderId}")
-    public void deleteOrder(@PathVariable("orderId") Integer orderId) {orderService.deleteOrder(orderId);}
+    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
+        orderService.deleteOrder(orderId);
+        report.setTitle("client connectivity: Order");
+        report.setMsg("Order deleted.Order ID "+ orderId);
+        template.convertAndSend(topic.getTopic(), report);
+    }
 
 
     public void updateOrder(

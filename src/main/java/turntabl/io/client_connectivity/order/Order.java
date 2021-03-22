@@ -7,7 +7,7 @@ import turntabl.io.client_connectivity.user.User;
 import javax.persistence.*;
 
 @Entity(name = "Order")
-@Table(name="porders")
+@Table(name="orders")
 public class Order {
     @Id
     @SequenceGenerator(
