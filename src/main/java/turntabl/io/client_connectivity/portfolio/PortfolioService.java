@@ -3,10 +3,10 @@ package turntabl.io.client_connectivity.portfolio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import turntabl.io.client_connectivity.order.Order;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PortfolioService {
@@ -15,7 +15,9 @@ public class PortfolioService {
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository) {this.portfolioRepository = portfolioRepository;}
 
-    public List<Portfolio> getPortfolio() { return portfolioRepository.findAll(); }
+    public List<Portfolio> getPortfolio() {
+        return portfolioRepository.findAll();
+    }
 
     public void addNewPortfolio(Portfolio portfolio) {
         portfolioRepository.save(portfolio);
@@ -43,6 +45,19 @@ public class PortfolioService {
     public Portfolio findPortfolioById(int portfolio_id) {
         Optional<Portfolio> portfolio = portfolioRepository.findById(portfolio_id);
         return portfolio.get();
+    }
+
+    public void fetchStock (int portfolio_id) {
+        Optional<Portfolio> portfolio = portfolioRepository.findById(portfolio_id);
+        Map<String, Integer> stocks = new HashMap<>();
+
+          //  .collect(groupingBy(p -> p.age, mapping((Person p) -> p.name, toList())));
+
+        Set<Order> orders = portfolio.get().getOrders();
+        Map<String, List<Order>> groupByProduct  =
+                orders.stream().collect(Collectors.groupingBy(order -> order.getProduct().getTicker()));
+
+        System.out.println(groupByProduct);
     }
 }
 

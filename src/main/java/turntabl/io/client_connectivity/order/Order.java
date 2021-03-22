@@ -3,9 +3,11 @@ package turntabl.io.client_connectivity.order;
 import turntabl.io.client_connectivity.DateAudit;
 import turntabl.io.client_connectivity.portfolio.Portfolio;
 import turntabl.io.client_connectivity.product.Product;
+import turntabl.io.client_connectivity.trade.Trade;
 import turntabl.io.client_connectivity.user.User;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "Order")
 @Table(name="porders")
@@ -42,6 +44,9 @@ public class Order extends DateAudit {
     @OneToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
+
+    @OneToMany(mappedBy = "order")
+    private Set<Trade> trades;
 
     public Order(double price, int quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
         this.price = price;
@@ -83,5 +88,21 @@ public class Order extends DateAudit {
 
     public void setOrder_status(String order_status) {
         this.order_status = order_status;
+    }
+
+    public String getOrder_type() {
+        return order_type;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Portfolio getPortfolio() {
+        return portfolio;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 }
