@@ -30,7 +30,6 @@ public class OrderController {
     private ReportingModel report;
   
     @Autowired
-    public OrderController(OrderService orderService) {
     public OrderController(OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
