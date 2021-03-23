@@ -13,21 +13,19 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    @Autowired
     private RedisTemplate template;
-    @Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
 
     @Autowired
-    public UserController(UserService userService) { this.userService = userService; }
+    public UserController(UserService userService, RedisTemplate redisTemplate) { this.userService = userService; this.template = redisTemplate; }
 
     @GetMapping
     public List<User> getUser() { return userService.getUsers(); }
 
     @PostMapping
-    public void registerNewUser(@RequestBody User user) {
+    public String registerNewUser(@RequestBody User user) {
         userService.addNewUser(user);
         report.setTitle("client connectivity: User");
         report.setMsg("New user registered");

@@ -12,15 +12,13 @@ import java.util.List;
 @RequestMapping(path = "api/products")
 public class ProductController {
     private final ProductService productService;
-    @Autowired
     private RedisTemplate template;
-    @Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
 
     @Autowired
-    public ProductController(ProductService productService) {this.productService = productService; }
+    public ProductController(ProductService productService, RedisTemplate redisTemplate) {this.productService = productService; this.template = redisTemplate; }
 
     @GetMapping
     public List<Product> getProducts() { return productService.getProducts(); }

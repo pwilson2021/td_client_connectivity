@@ -32,4 +32,4 @@ deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
   app: simba-client-connectivity
-  on: dev
+  on: philip_branch
