@@ -31,6 +31,8 @@ public class Product {
         this.ticker = ticker;
     }
 
+    public Product() { }
+
     public String getTicker() {
         return ticker;
     }
