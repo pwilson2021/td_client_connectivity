@@ -1,5 +1,6 @@
 package turntabl.io.client_connectivity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.springframework.data.annotation.CreatedDate;

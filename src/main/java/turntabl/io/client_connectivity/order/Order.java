@@ -41,7 +41,7 @@ public class Order extends DateAudit {
     @JoinColumn(name = "portfolio_id", referencedColumnName = "id")
     private Portfolio portfolio;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 

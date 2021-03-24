@@ -1,6 +1,7 @@
 package turntabl.io.client_connectivity.portfolio;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import turntabl.io.client_connectivity.order.Order;
 import turntabl.io.client_connectivity.user.User;
 
@@ -22,6 +23,7 @@ public class Portfolio {
     @OneToMany(mappedBy = "portfolio")
     private Set <Order> orders;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

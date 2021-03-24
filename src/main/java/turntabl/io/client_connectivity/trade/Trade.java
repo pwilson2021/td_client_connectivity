@@ -11,6 +11,8 @@ public class Trade {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private double price;
+    @Column(name = "exchange_order_id", nullable = false)
+    private String exchange_order_id;
     private double quantity;
     private String status;
 
@@ -55,5 +57,13 @@ public class Trade {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public String getExchange_order_id() {
+        return exchange_order_id;
+    }
+
+    public void setExchange_order_id(String exchange_order_id) {
+        this.exchange_order_id = exchange_order_id;
     }
 }
