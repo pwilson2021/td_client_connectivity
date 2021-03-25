@@ -41,6 +41,10 @@ public class Product {
         this.ticker =  ticker;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Product{" +

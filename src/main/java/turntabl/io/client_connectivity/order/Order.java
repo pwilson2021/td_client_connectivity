@@ -1,5 +1,6 @@
 package turntabl.io.client_connectivity.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import turntabl.io.client_connectivity.DateAudit;
 import turntabl.io.client_connectivity.portfolio.Portfolio;
 import turntabl.io.client_connectivity.product.Product;
@@ -33,14 +34,17 @@ public class Order extends DateAudit {
     private String order_status;
 
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "portfolio_id", referencedColumnName = "id")
     private Portfolio portfolio;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
