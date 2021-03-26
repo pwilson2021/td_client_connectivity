@@ -30,10 +30,10 @@ public class UserController {
     @PostMapping
     public String registerNewUser(@RequestBody User user) throws JsonProcessingException {
         userService.addNewUser(user);
-        String report = "new User registered"+user.toString();
+        String report = "new user registered"+user.toString();
 
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
-        return "User registration succesful";
+        return "User registration successful";
     }
 
     @DeleteMapping(path = "{userId}")
