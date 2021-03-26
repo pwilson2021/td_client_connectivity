@@ -1,6 +1,8 @@
 package turntabl.io.client_connectivity.portfolio;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -15,31 +17,34 @@ import java.util.List;
 @RequestMapping(path = "api/portfolios")
 public class PortfolioController {
     private final PortfolioService portfolioService;
-    //@Autowired
+    @Autowired
     private RedisTemplate template;
+    @Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
 
     private final UserService userService;
+    ObjectMapper mapper = new ObjectMapper();
+
 
     @Autowired
-    public PortfolioController(PortfolioService portfolioService, UserService userService, RedisTemplate redisTemplate) {
+    public PortfolioController(PortfolioService portfolioService, UserService userService) {
         this.portfolioService = portfolioService;
         this.userService = userService;
-        this.template = redisTemplate;
     }
 
     @GetMapping
     public List<Portfolio> getPortfolio() { return portfolioService.getPortfolio(); }
 
     @PostMapping
-    public void registerNewPortfolio(@RequestParam(name = "name") String portfolioName, @RequestParam(name= "user_id") Integer user_id) {
+    public void registerNewPortfolio(@RequestParam(name = "name") String portfolioName, @RequestParam(name= "user_id") Integer user_id) throws JsonProcessingException {
         User user = userService.findUserById(user_id);
         Portfolio portfolio = new Portfolio(portfolioName, user);
         portfolioService.addNewPortfolio(portfolio);
-        report.setTitle("client connectivity: portfolio");
-        report.setMsg("New portfolio created");
+
+        String report = "new portfolio registered"+portfolio.toString();
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
         template.convertAndSend(topic.getTopic(), report);
     }
 
@@ -48,16 +53,18 @@ public class PortfolioController {
         portfolioService.fetchStock(portfolioId);
     }
 
-    @DeleteMapping(path = "{portfolioId}")
-    public void deletePortfolio(@PathVariable("portfolioId") Integer portfolioId) {
-        portfolioService.deletePortfolio(portfolioId);
-        report.setTitle("client connectivity: product");
-        report.setMsg(" Portfolio deleted. Portfolio ID: "+ portfolioId);
-        template.convertAndSend(topic.getTopic(), report);
-    }
+//    @DeleteMapping(path = "{portfolioId}")
+//    public void deletePortfolio(@PathVariable("portfolioId") Integer portfolioId) {
+//        portfolioService.deletePortfolio(portfolioId);
+//        report.setTitle("client connectivity: product");
+//        report.setMsg(" Portfolio deleted. Portfolio ID: "+ portfolioId);
+//        template.convertAndSend(topic.getTopic(), report);
+//    }
 
+    @PutMapping(path = "{portfolioId}")
     public void updatePortfolio(
             @PathVariable("portfolioId") Integer portfolioId,
             @RequestParam(required = false) String name
-    ) { portfolioService.updatePortfolio(name, portfolioId);}
+    ) {
+        portfolioService.updatePortfolio(name, portfolioId);}
 }
