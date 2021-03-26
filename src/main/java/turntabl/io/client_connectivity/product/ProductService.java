@@ -18,7 +18,7 @@ public class ProductService {
     public List<Product> getProducts() { return productRepository.findAll(); }
 
     public void addNewProduct(Product product) {
-        Optional<Product> productOptional = productRepository.findProductByTicker(product);
+        Optional<Product> productOptional = productRepository.findProductByTicker(product.getTicker());
         if(productOptional.isPresent()) {
             throw new IllegalStateException("Ticker is taken");
         }
@@ -43,7 +43,7 @@ public class ProductService {
 
 
         if (ticker != null && ticker.length() > 0 && ! Objects.equals(product.getTicker(), ticker))  {
-            Optional<Product> productOptional = productRepository.findProductByTicker(product);
+            Optional<Product> productOptional = productRepository.findProductByTicker(product.getTicker());
             if (productOptional.isPresent()) {
                 throw new IllegalStateException("ticker taken");
             }

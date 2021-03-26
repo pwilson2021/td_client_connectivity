@@ -24,8 +24,8 @@ public class Product {
     )
     private String ticker;
 
-    @OneToOne(mappedBy = "product")
-    private Order order;
+    @OneToMany(mappedBy = "product")
+    private Set<Order> orders;
 
     public Product( String ticker) {
         this.ticker = ticker;
@@ -39,5 +39,18 @@ public class Product {
 
     public void setTicker(String ticker) {
         this.ticker =  ticker;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", ticker='" + ticker + '\'' +
+                ", orders=" + orders +
+                '}';
     }
 }

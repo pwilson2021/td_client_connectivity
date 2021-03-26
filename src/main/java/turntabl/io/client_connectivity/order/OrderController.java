@@ -50,12 +50,6 @@ public class OrderController {
     public List<Order> getOrders() { return orderService.getOrders() ;}
 
     @PostMapping
-    public void registerNewOrder(@RequestBody Order order) {
-        orderService.addNewOrder(order);
-        report.setTitle("client connectivity: Order");
-        report.setMsg("New Order created");
-        template.convertAndSend(topic.getTopic(), report);
-    }
     public void registerNewOrder(
             @RequestParam(name="price") Double price,
             @RequestParam(name="quantity") int quantity,
@@ -70,6 +64,9 @@ public class OrderController {
         Product product = productService.findProductById(product_id);
         Order order = new Order(price, quantity, order_type, order_status, user, portfolio, product);
         orderService.addNewOrder(order);
+        report.setTitle("client connectivity: Order");
+        report.setMsg("New Order created");
+        template.convertAndSend(topic.getTopic(), report);
     }
 
     @DeleteMapping(path = "{orderId}")

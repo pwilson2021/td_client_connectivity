@@ -24,7 +24,9 @@ public class ProductController {
     public List<Product> getProducts() { return productService.getProducts(); }
 
     @PostMapping
-    public void registerNewProduct(@RequestBody Product product) {
+    public void registerNewProduct(@RequestParam(name = "ticker") String ticker) {
+        Product product = new Product(ticker);
+//        System.out.println(product.toString());
         productService.addNewProduct(product);
         report.setTitle("client connectivity: product");
         report.setMsg("New product registered");

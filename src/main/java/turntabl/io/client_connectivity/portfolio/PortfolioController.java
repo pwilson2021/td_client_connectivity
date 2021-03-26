@@ -34,16 +34,13 @@ public class PortfolioController {
     public List<Portfolio> getPortfolio() { return portfolioService.getPortfolio(); }
 
     @PostMapping
-    public void registerNewPortfolio(@RequestBody Portfolio portfolio) {
-        portfolioService.addNewPortfolio(portfolio);
-        report.setTitle("client connectivity: portfolio");
-        report.setMsg("New portfolio created");
-        template.convertAndSend(topic.getTopic(), report); }
-
-      public void registerNewPortfolio(@RequestParam(name = "name") String portfolioName, @RequestParam(name= "user_id") Integer user_id) {
+    public void registerNewPortfolio(@RequestParam(name = "name") String portfolioName, @RequestParam(name= "user_id") Integer user_id) {
         User user = userService.findUserById(user_id);
         Portfolio portfolio = new Portfolio(portfolioName, user);
         portfolioService.addNewPortfolio(portfolio);
+        report.setTitle("client connectivity: portfolio");
+        report.setMsg("New portfolio created");
+        template.convertAndSend(topic.getTopic(), report);
     }
 
     @GetMapping(path = "{portfolioId}")
