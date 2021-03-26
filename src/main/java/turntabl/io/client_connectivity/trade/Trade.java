@@ -1,12 +1,14 @@
 package turntabl.io.client_connectivity.trade;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import turntabl.io.client_connectivity.DateAudit;
 import turntabl.io.client_connectivity.order.Order;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="Trade")
-public class Trade {
+public class Trade extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -15,16 +17,28 @@ public class Trade {
     private String exchange_order_id;
     private double quantity;
     private String status;
+    private int exchange_id;
 
+    @JsonIgnore
     @ManyToOne
     private Order order;
 
-    public Trade(int id, double price, double quantity, Order order, String status) {
+    public Trade(int id, double price, String exchange_order_id, double quantity, String status, int exchange_id, Order order) {
         this.id = id;
         this.price = price;
+        this.exchange_order_id = exchange_order_id;
         this.quantity = quantity;
-        this.order = order;
         this.status = status;
+        this.exchange_id = exchange_id;
+        this.order = order;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getPrice() {
@@ -33,6 +47,14 @@ public class Trade {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getExchange_order_id() {
+        return exchange_order_id;
+    }
+
+    public void setExchange_order_id(String exchange_order_id) {
+        this.exchange_order_id = exchange_order_id;
     }
 
     public double getQuantity() {
@@ -51,19 +73,19 @@ public class Trade {
         this.status = status;
     }
 
+    public int getExchange_id() {
+        return exchange_id;
+    }
+
+    public void setExchange_id(int exchange_id) {
+        this.exchange_id = exchange_id;
+    }
+
     public Order getOrder() {
         return order;
     }
 
     public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public String getExchange_order_id() {
-        return exchange_order_id;
-    }
-
-    public void setExchange_order_id(String exchange_order_id) {
-        this.exchange_order_id = exchange_order_id;
     }
 }

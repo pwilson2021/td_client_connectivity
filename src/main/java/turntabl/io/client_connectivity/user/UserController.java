@@ -1,5 +1,7 @@
 package turntabl.io.client_connectivity.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -15,6 +17,7 @@ public class UserController {
     private final UserService userService;
     private RedisTemplate template;
     private ChannelTopic topic;
+    ObjectMapper mapper = new ObjectMapper();
 
     private ReportingModel report;
 
@@ -25,12 +28,11 @@ public class UserController {
     public List<User> getUser() { return userService.getUsers(); }
 
     @PostMapping
-    public String registerNewUser(@RequestBody User user) {
+    public String registerNewUser(@RequestBody User user) throws JsonProcessingException {
         userService.addNewUser(user);
-        report.setTitle("client connectivity: User");
-        report.setMsg("New user registered");
-        template.convertAndSend(topic.getTopic(), report);
-        userService.addNewUser(user);
+        String report = "new User registered"+user.toString();
+
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
         return "User registration succesful";
     }
 

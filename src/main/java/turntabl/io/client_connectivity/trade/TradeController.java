@@ -19,15 +19,15 @@ public class TradeController {
 
     public List<Trade> getTrades() { return tradeService.getTrades(); }
 
-    @PostMapping
-    public void registerNewProduct(
-            @RequestParam(name = "ticker") String ticker
-    ) {
-        Product product = new Product(ticker);
-//      System.out.println(product.toString());
-        productService.addNewProduct(product);
-        report.setTitle("client connectivity: product");
-        report.setMsg("New product registered");
-        template.convertAndSend(topic.getTopic(), report);
-    }
+//    @PostMapping
+//    public void registerNewProduct(
+//            @RequestParam(name = "ticker") String ticker
+//    ) {
+//        Product product = new Product(ticker);
+////      System.out.println(product.toString());
+//        productService.addNewProduct(product);
+//        report.setTitle("client connectivity: product");
+//        report.setMsg("New product registered");
+//        template.convertAndSend(topic.getTopic(), report);
+//    }
 }

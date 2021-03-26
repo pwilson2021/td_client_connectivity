@@ -1,6 +1,7 @@
 package turntabl.io.client_connectivity.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ public class AuthController {
     public AuthController(UserService userService) { this.userService = userService; }
 
     @RequestMapping("/login")
+    @ResponseBody
     public Map<String, Object> login(@RequestBody User user) {
         HashMap<String , Object> userDetails = new HashMap<>();
         if(userService.findIfUserExists(user.getEmail())){
@@ -26,19 +28,24 @@ public class AuthController {
             userDetails.put("email", db_user.getEmail());
             userDetails.put("firstname", db_user.getFirst_name());
             userDetails.put("date_created", db_user.getDate_created());
+            userDetails.put("message", "login successful");
             userDetails.put("id",db_user.getId());
+            userDetails.put("portfolios", db_user.getPortfolio());
+            userDetails.put("code", HttpStatus.OK.value());
             return userDetails;
         } else {
+            userDetails.put("code", HttpStatus.UNAUTHORIZED.value());
             userDetails.put("message","User Credentials are invalid");
             return userDetails;
         }
     }
 
-    @RequestMapping("/user")
-    public Principal user(HttpServletRequest request) {
-        String authToken = request.getHeader("Authorization")
-                .substring("Basic".length()).trim();
-        return () ->  new String(Base64.getDecoder()
-                .decode(authToken)).split(":")[0];
-    }
+
+//    @RequestMapping("/user")
+//    public Principal user(HttpServletRequest request) {
+//        String authToken = request.getHeader("Authorization")
+//                .substring("Basic".length()).trim();
+//        return () ->  new String(Base64.getDecoder()
+//                .decode(authToken)).split(":")[0];
+//    }
 }
