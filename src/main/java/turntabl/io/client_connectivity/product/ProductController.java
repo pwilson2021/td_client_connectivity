@@ -1,5 +1,7 @@
 package turntabl.io.client_connectivity.product;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -12,10 +14,13 @@ import java.util.List;
 @RequestMapping(path = "api/products")
 public class ProductController {
     private final ProductService productService;
+    @Autowired
     private RedisTemplate template;
+    @Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
+    ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     public ProductController(ProductService productService, RedisTemplate redisTemplate) {this.productService = productService; this.template = redisTemplate; }
@@ -24,12 +29,12 @@ public class ProductController {
     public List<Product> getProducts() { return productService.getProducts(); }
 
     @PostMapping
-    public void registerNewProduct(@RequestParam(name = "ticker") String ticker) {
+    public void registerNewProduct(@RequestParam(name = "ticker") String ticker) throws JsonProcessingException {
         Product product = new Product(ticker);
 //        System.out.println(product.toString());
         productService.addNewProduct(product);
-        report.setTitle("client connectivity: product");
-        report.setMsg("New product registered");
+        String report = "new product registered"+product.toString();
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
         template.convertAndSend(topic.getTopic(), report);
     }
 

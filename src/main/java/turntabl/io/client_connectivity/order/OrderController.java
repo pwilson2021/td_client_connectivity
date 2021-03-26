@@ -1,5 +1,7 @@
 package turntabl.io.client_connectivity.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -22,28 +24,25 @@ public class OrderController {
     private final PortfolioService portfolioService;
     private final ProductService productService;
 
-    //@Autowired
+    @Autowired
     private RedisTemplate template;
-    //@Autowired
+    @Autowired
     private ChannelTopic topic;
 
     private ReportingModel report;
-  
+    ObjectMapper mapper = new ObjectMapper();
+
+
     @Autowired
     public OrderController(
             OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
-                           ProductService productService,
-                           RedisTemplate redisTemplate
-                           //ChannelTopic channelTopic
-    ) {
+                           ProductService productService) {
         this.orderService = orderService;
         this.userService = userService;
         this.portfolioService = portfolioService;
         this.productService = productService;
-        this.template = redisTemplate;
-        //this.topic = channelTopic;
     }
 
     @GetMapping
@@ -58,26 +57,27 @@ public class OrderController {
             @RequestParam(name="user_id") int user_id,
             @RequestParam(name="portfolio_id") int portfolio_id,
             @RequestParam(name="product_id") int product_id
-    ) {
+    ) throws JsonProcessingException {
         User user = userService.findUserById(user_id);
         Portfolio portfolio = portfolioService.findPortfolioById(portfolio_id);
         Product product = productService.findProductById(product_id);
         Order order = new Order(price, quantity, order_type, order_status, user, portfolio, product);
         orderService.addNewOrder(order);
-        report.setTitle("client connectivity: Order");
-        report.setMsg("New Order created");
+        String report = "new order registered"+order.toString();
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
         template.convertAndSend(topic.getTopic(), report);
     }
 
-    @DeleteMapping(path = "{orderId}")
-    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
-        orderService.deleteOrder(orderId);
-        report.setTitle("client connectivity: Order");
-        report.setMsg("Order deleted.Order ID "+ orderId);
-        template.convertAndSend(topic.getTopic(), report);
-    }
+//    @DeleteMapping(path = "{orderId}")
+//    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
+//        orderService.deleteOrder(orderId);
+//
+//        report.setTitle("client connectivity: Order");
+//        report.setMsg("Order deleted.Order ID "+ orderId);
+//        template.convertAndSend(topic.getTopic(), report);
+//    }
 
-
+    @PutMapping(path={"orderId"})
     public void updateOrder(
             @PathVariable("orderId") Integer orderId,
             @RequestParam(required = false) Double price,
@@ -85,5 +85,7 @@ public class OrderController {
             @RequestParam(required = false) String orderStatus
     ) {
         orderService.updateOrder(orderId, price, quantity, orderStatus);
+        String report = "order with id "+orderId +" updated registered";
+        template.convertAndSend(topic.getTopic(), report);
     }
 }
