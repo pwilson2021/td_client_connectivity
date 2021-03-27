@@ -78,7 +78,7 @@ public class OrderController {
 //        template.convertAndSend(topic.getTopic(), report);
 //    }
 
-    @PutMapping(path={"orderId"})
+    @PutMapping(path = "{orderId}")
     public void updateOrder(
             @PathVariable("orderId") Integer orderId,
             @RequestParam(required = false) Double price,
@@ -90,8 +90,8 @@ public class OrderController {
         template.convertAndSend(topic.getTopic(), report);
     }
 
-    @GetMapping(path = {"userId"})
-    public Set<Order> getUserOrders(@RequestParam(required = false) int userId) {
+    @GetMapping("get_user_orders/{userId}")
+    public Set<Order> getUserOrders(@PathVariable(required = false) int userId) {
         User user = userService.findUserById(userId);
         return user.getOrders();
     }
