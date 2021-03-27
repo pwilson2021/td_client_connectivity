@@ -3,6 +3,7 @@ package turntabl.io.client_connectivity.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -21,7 +22,7 @@ public class AuthController {
 
     @RequestMapping("/login")
     @ResponseBody
-    public Map<String, Object> login(@RequestBody User user) {
+    public Map<String, Object> login(@RequestBody User user) throws ResponseStatusException {
         HashMap<String , Object> userDetails = new HashMap<>();
         if(userService.findIfUserExists(user.getEmail())){
             User db_user = userService.findUserByMail(user.getEmail());
@@ -34,9 +35,7 @@ public class AuthController {
             userDetails.put("code", HttpStatus.OK.value());
             return userDetails;
         } else {
-            userDetails.put("code", HttpStatus.UNAUTHORIZED.value());
-            userDetails.put("message","User Credentials are invalid");
-            return userDetails;
+           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User credentials invalid");
         }
     }
 
