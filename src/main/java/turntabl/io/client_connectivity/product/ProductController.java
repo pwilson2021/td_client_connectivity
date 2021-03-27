@@ -10,6 +10,7 @@ import turntabl.io.client_connectivity.reporting.ReportingModel;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api/products")
 public class ProductController {

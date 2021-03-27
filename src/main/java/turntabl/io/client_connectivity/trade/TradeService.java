@@ -2,6 +2,7 @@ package turntabl.io.client_connectivity.trade;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 
 import javax.transaction.Transactional;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@CrossOrigin
 @Service
 public class TradeService {
     private final TradeRepository tradeRepository;
