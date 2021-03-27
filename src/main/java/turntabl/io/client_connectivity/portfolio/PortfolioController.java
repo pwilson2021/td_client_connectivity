@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.web.bind.annotation.*;
+import turntabl.io.client_connectivity.order.Order;
 import turntabl.io.client_connectivity.reporting.ReportingModel;
 import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserRepository;
 import turntabl.io.client_connectivity.user.UserService;
 import java.util.List;
+import java.util.Set;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api/portfolios")
 public class PortfolioController {
@@ -66,5 +69,12 @@ public class PortfolioController {
             @PathVariable("portfolioId") Integer portfolioId,
             @RequestParam(required = false) String name
     ) {
-        portfolioService.updatePortfolio(name, portfolioId);}
+        portfolioService.updatePortfolio(name, portfolioId);
+    }
+
+    @GetMapping(path = {"userId"})
+    public Set<Portfolio> getUserPortfolios(@RequestParam(required = false) int userId) {
+        User user = userService.findUserById(userId);
+        return user.getPortfolio();
+    }
 }

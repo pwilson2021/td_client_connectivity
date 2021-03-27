@@ -15,6 +15,7 @@ import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "api/orders")
@@ -87,5 +88,11 @@ public class OrderController {
         orderService.updateOrder(orderId, price, quantity, orderStatus);
         String report = "order with id "+orderId +" updated registered";
         template.convertAndSend(topic.getTopic(), report);
+    }
+
+    @GetMapping(path = {"userId"})
+    public Set<Order> getUserOrders(@RequestParam(required = false) int userId) {
+        User user = userService.findUserById(userId);
+        return user.getOrders();
     }
 }
