@@ -72,8 +72,8 @@ public class PortfolioController {
         portfolioService.updatePortfolio(name, portfolioId);
     }
 
-    @GetMapping(path = {"userId"})
-    public Set<Portfolio> getUserPortfolios(@RequestParam(required = false) int userId) {
+    @GetMapping("get_user_portfolios/{userId}")
+    public Set<Portfolio> getUserPortfolios(@PathVariable(required = false) Integer userId) {
         User user = userService.findUserById(userId);
         return user.getPortfolio();
     }
