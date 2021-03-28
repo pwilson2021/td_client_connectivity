@@ -51,18 +51,14 @@ public class OrderController {
 
     @PostMapping
     public void registerNewOrder(
-            @RequestParam(name="price") Double price,
-            @RequestParam(name="quantity") int quantity,
-            @RequestParam(name="order_type") String order_type,
-            @RequestParam(name="order_status") String order_status,
-            @RequestParam(name="user_id") int user_id,
-            @RequestParam(name="portfolio_id") int portfolio_id,
-            @RequestParam(name="product_id") int product_id
+            @RequestBody OrderRequest orderRequest
     ) throws JsonProcessingException {
-        User user = userService.findUserById(user_id);
-        Portfolio portfolio = portfolioService.findPortfolioById(portfolio_id);
-        Product product = productService.findProductById(product_id);
-        Order order = new Order(price, quantity, order_type, order_status, user, portfolio, product);
+        User user = userService.findUserById(orderRequest.getUser_id());
+        Portfolio portfolio = portfolioService.findPortfolioById(orderRequest.getPortfolio_id());
+        Product product = productService.findProductById(orderRequest.getProduct_id());
+        Order order = new Order(orderRequest.getPrice(), orderRequest.getQuantity(),
+                orderRequest.getOrder_type(), orderRequest.getOrder_status(),
+                user, portfolio, product);
         orderService.addNewOrder(order);
         String report = "new order registered"+order.toString();
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
