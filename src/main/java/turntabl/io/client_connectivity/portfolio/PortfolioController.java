@@ -41,9 +41,9 @@ public class PortfolioController {
     public List<Portfolio> getPortfolio() { return portfolioService.getPortfolio(); }
 
     @PostMapping
-    public void registerNewPortfolio(@RequestParam(name = "name") String portfolioName, @RequestParam(name= "user_id") Integer user_id) throws JsonProcessingException {
-        User user = userService.findUserById(user_id);
-        Portfolio portfolio = new Portfolio(portfolioName, user);
+    public void registerNewPortfolio(@RequestBody PortfolioRequest portfolioRequest) throws JsonProcessingException {
+        User user = userService.findUserById(portfolioRequest.getUser_id());
+        Portfolio portfolio = new Portfolio(portfolioRequest.getName(), user);
         portfolioService.addNewPortfolio(portfolio);
 
         String report = "new portfolio registered"+portfolio.toString();
