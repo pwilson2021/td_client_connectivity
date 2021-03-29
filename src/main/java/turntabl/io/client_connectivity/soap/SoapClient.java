@@ -6,14 +6,15 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 import turntabl.io.clientconnectivity.wsdl.GetOrderRequest;
 import turntabl.io.clientconnectivity.wsdl.GetOrderResponse;
-import turntabl.io.clientconnectivity.wsdl.SoapOrder;
 
-import java.math.BigInteger;
 
 public class SoapClient extends WebServiceGatewaySupport {
-    public GetOrderResponse orderResponse(SoapOrder order){
+    public GetOrderResponse orderResponse(int orderId, int clientId, int productId, int portfolioId){
         GetOrderRequest request = new GetOrderRequest();
-        request.setOrder(order);
+        request.setOrderId(orderId);
+        request.setClientId(clientId);
+        request.setProductId(productId);
+        request.setPortfolioId(portfolioId);
 //        send to reporting service
         new SoapActionCallback("http://turntabl.io/get-client-order/GetOrderRequest");
 
