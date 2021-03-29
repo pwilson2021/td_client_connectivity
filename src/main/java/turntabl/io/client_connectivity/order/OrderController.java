@@ -14,7 +14,7 @@ import turntabl.io.client_connectivity.product.ProductService;
 import turntabl.io.client_connectivity.soap.SoapClient;
 import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
-import turntabl.io.clientconnectivity.wsdl.SoapOrder;
+
 
 
 import java.util.List;
@@ -57,9 +57,7 @@ public class OrderController {
     public List<Order> getOrders() { return orderService.getOrders() ;}
 
     @PostMapping
-    public void registerNewOrder(
-            @RequestBody OrderRequest orderRequest
-    ) throws JsonProcessingException {
+    public void registerNewOrder(@RequestBody OrderRequest orderRequest) throws JsonProcessingException {
         User user = userService.findUserById(orderRequest.getUser_id());
         Portfolio portfolio = portfolioService.findPortfolioById(orderRequest.getPortfolio_id());
         Product product = productService.findProductById(orderRequest.getProduct_id());
@@ -69,19 +67,12 @@ public class OrderController {
                 orderRequest.getOrder_type(),
                 "pending",
                 user, portfolio, product);
-       //int test = orderService.addNewOrder(order);
-//        SoapOrder soapOrder = new SoapOrder();
-//        soapOrder.setPrice(orderRequest.getPrice());
-//        soapOrder.setQuantity(order.getQuantity());
-//        soapOrder.setOrderType(order.getOrder_type());
-//        soapOrder.setOrderStatus("pending");
-//        soapOrder.setUserId(orderRequest.getUser_id());
-//        soapOrder.setProductId(orderRequest.getProduct_id());
-//        soapOrder.setPortfolioId(orderRequest.getPortfolio_id());
-//        //send order to OVS through soap
-//        soapClient.orderResponse(soapOrder);
-//        //        send order to reporting service
-//        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+order.toString()));
+
+        //        send order to reporting service
+
+        int orderId = orderService.addNewOrder(order);
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+orderId));
+        soapClient.orderResponse(orderId,orderRequest.getUser_id(),orderRequest.getProduct_id(),orderRequest.getPortfolio_id());
     }
 
 
