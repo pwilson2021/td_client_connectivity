@@ -8,6 +8,7 @@ import turntabl.io.client_connectivity.trade.Trade;
 import turntabl.io.client_connectivity.user.User;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.Set;
 
 @Entity(name = "Order")

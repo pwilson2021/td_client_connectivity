@@ -11,12 +11,16 @@ import turntabl.io.client_connectivity.portfolio.PortfolioService;
 import turntabl.io.client_connectivity.product.Product;
 import turntabl.io.client_connectivity.reporting.ReportingModel;
 import turntabl.io.client_connectivity.product.ProductService;
+import turntabl.io.client_connectivity.soap.SoapClient;
 import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
+import turntabl.io.clientconnectivity.wsdl.SoapOrder;
+
 
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api/orders")
 public class OrderController {
@@ -29,17 +33,20 @@ public class OrderController {
     private RedisTemplate template;
     @Autowired
     private ChannelTopic topic;
-
-    private ReportingModel report;
+    @Autowired
+    SoapClient soapClient;
     ObjectMapper mapper = new ObjectMapper();
 
+    private ReportingModel report;
 
     @Autowired
     public OrderController(
             OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
-                           ProductService productService) {
+                           ProductService productService
+
+    ){
         this.orderService = orderService;
         this.userService = userService;
         this.portfolioService = portfolioService;
@@ -56,14 +63,27 @@ public class OrderController {
         User user = userService.findUserById(orderRequest.getUser_id());
         Portfolio portfolio = portfolioService.findPortfolioById(orderRequest.getPortfolio_id());
         Product product = productService.findProductById(orderRequest.getProduct_id());
-        Order order = new Order(orderRequest.getPrice(), orderRequest.getQuantity(),
-                orderRequest.getOrder_type(), orderRequest.getOrder_status(),
+        Order order = new Order(
+                orderRequest.getPrice(),
+                orderRequest.getQuantity(),
+                orderRequest.getOrder_type(),
+                "pending",
                 user, portfolio, product);
-        orderService.addNewOrder(order);
-        String report = "new order registered"+order.toString();
-        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
-        template.convertAndSend(topic.getTopic(), report);
+       //int test = orderService.addNewOrder(order);
+//        SoapOrder soapOrder = new SoapOrder();
+//        soapOrder.setPrice(orderRequest.getPrice());
+//        soapOrder.setQuantity(order.getQuantity());
+//        soapOrder.setOrderType(order.getOrder_type());
+//        soapOrder.setOrderStatus("pending");
+//        soapOrder.setUserId(orderRequest.getUser_id());
+//        soapOrder.setProductId(orderRequest.getProduct_id());
+//        soapOrder.setPortfolioId(orderRequest.getPortfolio_id());
+//        //send order to OVS through soap
+//        soapClient.orderResponse(soapOrder);
+//        //        send order to reporting service
+//        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+order.toString()));
     }
+
 
 //    @DeleteMapping(path = "{orderId}")
 //    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
@@ -80,8 +100,9 @@ public class OrderController {
             @RequestParam(required = false) Double price,
             @RequestParam(required = false) int quantity,
             @RequestParam(required = false) String orderStatus
-    ) {
+    ) throws JsonProcessingException {
         orderService.updateOrder(orderId, price, quantity, orderStatus);
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Updated:  "+orderId.toString()));
         String report = "order with id "+orderId +" updated registered";
         template.convertAndSend(topic.getTopic(), report);
     }
