@@ -20,6 +20,7 @@ import turntabl.io.clientconnectivity.wsdl.SoapOrder;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api/orders")
 public class OrderController {
@@ -37,8 +38,6 @@ public class OrderController {
     ObjectMapper mapper = new ObjectMapper();
 
     private ReportingModel report;
-    ObjectMapper mapper = new ObjectMapper();
-
 
     @Autowired
     public OrderController(
@@ -59,50 +58,32 @@ public class OrderController {
 
     @PostMapping
     public void registerNewOrder(
-            @RequestParam(name="price") Double price,
-            @RequestParam(name="quantity") int quantity,
-            @RequestParam(name="order_type") String order_type,
-            @RequestParam(name="order_status") String order_status,
-            @RequestParam(name="user_id") int user_id,
-            @RequestParam(name="portfolio_id") int portfolio_id,
-            @RequestParam(name="product_id") int product_id
-    ) throws JsonProcessingException {
-        User user = userService.findUserById(user_id);
-        Portfolio portfolio = portfolioService.findPortfolioById(portfolio_id);
-        Product product = productService.findProductById(product_id);
-        Order order = new Order(price, quantity, order_type, order_status, user, portfolio, product);
-        orderService.addNewOrder(order);
-        SoapOrder soapOrder = new SoapOrder();
-        soapOrder.setPrice(price);
-        soapOrder.setQuantity(quantity);
-        soapOrder.setOrderType(order_type);
-        soapOrder.setOrderStatus(order_status);
-        soapOrder.setUserId(user_id);
-        soapOrder.setProductId(product_id);
-        soapOrder.setPortfolioId(portfolio_id);
-//send order to OVS through soap
-        soapClient.orderResponse(soapOrder);
-//        send order to reporting service
-        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+order.toString()));
-    }
-
-    @DeleteMapping(path = "{orderId}")
-    public void deleteOrder(@PathVariable("orderId") Integer orderId) throws JsonProcessingException {
-        orderService.deleteOrder(orderId);
-        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Deleted:  "+orderId.toString()));
             @RequestBody OrderRequest orderRequest
     ) throws JsonProcessingException {
         User user = userService.findUserById(orderRequest.getUser_id());
         Portfolio portfolio = portfolioService.findPortfolioById(orderRequest.getPortfolio_id());
         Product product = productService.findProductById(orderRequest.getProduct_id());
-        Order order = new Order(orderRequest.getPrice(), orderRequest.getQuantity(),
-                orderRequest.getOrder_type(), orderRequest.getOrder_status(),
+        Order order = new Order(
+                orderRequest.getPrice(),
+                orderRequest.getQuantity(),
+                orderRequest.getOrder_type(),
+                "pending",
                 user, portfolio, product);
-        orderService.addNewOrder(order);
-        String report = "new order registered"+order.toString();
-        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
-        template.convertAndSend(topic.getTopic(), report);
+       //int test = orderService.addNewOrder(order);
+//        SoapOrder soapOrder = new SoapOrder();
+//        soapOrder.setPrice(orderRequest.getPrice());
+//        soapOrder.setQuantity(order.getQuantity());
+//        soapOrder.setOrderType(order.getOrder_type());
+//        soapOrder.setOrderStatus("pending");
+//        soapOrder.setUserId(orderRequest.getUser_id());
+//        soapOrder.setProductId(orderRequest.getProduct_id());
+//        soapOrder.setPortfolioId(orderRequest.getPortfolio_id());
+//        //send order to OVS through soap
+//        soapClient.orderResponse(soapOrder);
+//        //        send order to reporting service
+//        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+order.toString()));
     }
+
 
 //    @DeleteMapping(path = "{orderId}")
 //    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
