@@ -11,8 +11,11 @@ import turntabl.io.client_connectivity.portfolio.PortfolioService;
 import turntabl.io.client_connectivity.product.Product;
 import turntabl.io.client_connectivity.reporting.ReportingModel;
 import turntabl.io.client_connectivity.product.ProductService;
+import turntabl.io.client_connectivity.soap.SoapClient;
 import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
+import turntabl.io.clientconnectivity.wsdl.SoapOrder;
+
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +32,9 @@ public class OrderController {
     private RedisTemplate template;
     @Autowired
     private ChannelTopic topic;
+    @Autowired
+    SoapClient soapClient;
+    ObjectMapper mapper = new ObjectMapper();
 
     private ReportingModel report;
     ObjectMapper mapper = new ObjectMapper();
@@ -39,7 +45,9 @@ public class OrderController {
             OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
-                           ProductService productService) {
+                           ProductService productService
+
+    ){
         this.orderService = orderService;
         this.userService = userService;
         this.portfolioService = portfolioService;
@@ -51,6 +59,37 @@ public class OrderController {
 
     @PostMapping
     public void registerNewOrder(
+            @RequestParam(name="price") Double price,
+            @RequestParam(name="quantity") int quantity,
+            @RequestParam(name="order_type") String order_type,
+            @RequestParam(name="order_status") String order_status,
+            @RequestParam(name="user_id") int user_id,
+            @RequestParam(name="portfolio_id") int portfolio_id,
+            @RequestParam(name="product_id") int product_id
+    ) throws JsonProcessingException {
+        User user = userService.findUserById(user_id);
+        Portfolio portfolio = portfolioService.findPortfolioById(portfolio_id);
+        Product product = productService.findProductById(product_id);
+        Order order = new Order(price, quantity, order_type, order_status, user, portfolio, product);
+        orderService.addNewOrder(order);
+        SoapOrder soapOrder = new SoapOrder();
+        soapOrder.setPrice(price);
+        soapOrder.setQuantity(quantity);
+        soapOrder.setOrderType(order_type);
+        soapOrder.setOrderStatus(order_status);
+        soapOrder.setUserId(user_id);
+        soapOrder.setProductId(product_id);
+        soapOrder.setPortfolioId(portfolio_id);
+//send order to OVS through soap
+        soapClient.orderResponse(soapOrder);
+//        send order to reporting service
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+order.toString()));
+    }
+
+    @DeleteMapping(path = "{orderId}")
+    public void deleteOrder(@PathVariable("orderId") Integer orderId) throws JsonProcessingException {
+        orderService.deleteOrder(orderId);
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Deleted:  "+orderId.toString()));
             @RequestBody OrderRequest orderRequest
     ) throws JsonProcessingException {
         User user = userService.findUserById(orderRequest.getUser_id());
@@ -80,8 +119,9 @@ public class OrderController {
             @RequestParam(required = false) Double price,
             @RequestParam(required = false) int quantity,
             @RequestParam(required = false) String orderStatus
-    ) {
+    ) throws JsonProcessingException {
         orderService.updateOrder(orderId, price, quantity, orderStatus);
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Updated:  "+orderId.toString()));
         String report = "order with id "+orderId +" updated registered";
         template.convertAndSend(topic.getTopic(), report);
     }

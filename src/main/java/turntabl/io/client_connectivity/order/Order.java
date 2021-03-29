@@ -8,6 +8,7 @@ import turntabl.io.client_connectivity.trade.Trade;
 import turntabl.io.client_connectivity.user.User;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.Set;
 
 @Entity(name = "Order")
@@ -65,7 +66,7 @@ public class Order extends DateAudit {
         this.product = product;
     }
 
-    public Order() {
+    public Order(Double price, BigInteger quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
 
     }
 
