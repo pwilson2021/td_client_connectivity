@@ -53,6 +53,9 @@ public class Order extends DateAudit {
     @OneToMany(mappedBy = "order")
     private Set<Trade> trades;
 
+    @Column(name = "qtyFulfilled", nullable = true, columnDefinition = "integer default 0")
+    private Integer qtyFulfilled;
+
     public Order(double price, int quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
         this.price = price;
         this.quantity = quantity;
@@ -109,5 +112,13 @@ public class Order extends DateAudit {
 
     public Product getProduct() {
         return product;
+    }
+
+    public Integer getQtyFulfilled() {
+        return qtyFulfilled;
+    }
+
+    public void setQtyFulfilled(Integer qtyFulfilled) {
+        this.qtyFulfilled = qtyFulfilled;
     }
 }

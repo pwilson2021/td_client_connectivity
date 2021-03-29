@@ -18,6 +18,7 @@ import turntabl.io.clientconnectivity.wsdl.SoapOrder;
 
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "api/orders")
@@ -36,22 +37,21 @@ public class OrderController {
     ObjectMapper mapper = new ObjectMapper();
 
     private ReportingModel report;
-  
+    ObjectMapper mapper = new ObjectMapper();
+
+
     @Autowired
     public OrderController(
             OrderService orderService,
                            PortfolioService portfolioService,
                             UserService userService,
                            ProductService productService
-//                           RedisTemplate redisTemplate
-                           //ChannelTopic channelTopic
-    ) {
+
+    ){
         this.orderService = orderService;
         this.userService = userService;
         this.portfolioService = portfolioService;
         this.productService = productService;
-//        this.template = redisTemplate;
-        //this.topic = channelTopic;
     }
 
     @GetMapping
@@ -90,9 +90,30 @@ public class OrderController {
     public void deleteOrder(@PathVariable("orderId") Integer orderId) throws JsonProcessingException {
         orderService.deleteOrder(orderId);
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Deleted:  "+orderId.toString()));
+            @RequestBody OrderRequest orderRequest
+    ) throws JsonProcessingException {
+        User user = userService.findUserById(orderRequest.getUser_id());
+        Portfolio portfolio = portfolioService.findPortfolioById(orderRequest.getPortfolio_id());
+        Product product = productService.findProductById(orderRequest.getProduct_id());
+        Order order = new Order(orderRequest.getPrice(), orderRequest.getQuantity(),
+                orderRequest.getOrder_type(), orderRequest.getOrder_status(),
+                user, portfolio, product);
+        orderService.addNewOrder(order);
+        String report = "new order registered"+order.toString();
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
+        template.convertAndSend(topic.getTopic(), report);
     }
 
+//    @DeleteMapping(path = "{orderId}")
+//    public void deleteOrder(@PathVariable("orderId") Integer orderId) {
+//        orderService.deleteOrder(orderId);
+//
+//        report.setTitle("client connectivity: Order");
+//        report.setMsg("Order deleted.Order ID "+ orderId);
+//        template.convertAndSend(topic.getTopic(), report);
+//    }
 
+    @PutMapping(path = "{orderId}")
     public void updateOrder(
             @PathVariable("orderId") Integer orderId,
             @RequestParam(required = false) Double price,
@@ -101,5 +122,13 @@ public class OrderController {
     ) throws JsonProcessingException {
         orderService.updateOrder(orderId, price, quantity, orderStatus);
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Updated:  "+orderId.toString()));
+        String report = "order with id "+orderId +" updated registered";
+        template.convertAndSend(topic.getTopic(), report);
+    }
+
+    @GetMapping("get_user_orders/{userId}")
+    public Set<Order> getUserOrders(@PathVariable(required = false) int userId) {
+        User user = userService.findUserById(userId);
+        return user.getOrders();
     }
 }

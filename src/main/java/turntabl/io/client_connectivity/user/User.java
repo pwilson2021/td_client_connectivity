@@ -110,6 +110,10 @@ public class User extends DateAudit {
         return portfolio;
     }
 
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
     @OneToMany(mappedBy = "user")
     private Set<Order> orders;
 
