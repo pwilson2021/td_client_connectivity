@@ -19,8 +19,10 @@ public class OrderService {
 
     public List<Order> getOrders() { return orderRepository.findAll();}
 
-    public void addNewOrder(Order order) {
-        orderRepository.save(order);
+    public int addNewOrder(Order order) {
+       Order orderObject = orderRepository.save(order);
+       orderRepository.flush();
+       return orderObject.getId();
     }
 
     public void deleteOrder(Integer id) {
@@ -49,8 +51,6 @@ public class OrderService {
         if (order_status != null &&  !Objects.equals(order.getOrder_status() , order_status)) {
             order.setOrder_status(order_status);
         }
-
-
     }
 
 }

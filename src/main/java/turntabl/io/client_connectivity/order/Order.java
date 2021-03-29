@@ -66,7 +66,7 @@ public class Order extends DateAudit {
         this.product = product;
     }
 
-    public Order(Double price, BigInteger quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
+    public Order() {
 
     }
 
