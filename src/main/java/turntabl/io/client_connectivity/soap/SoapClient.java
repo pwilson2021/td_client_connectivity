@@ -19,6 +19,6 @@ public class SoapClient extends WebServiceGatewaySupport {
         new SoapActionCallback("http://turntabl.io/get-client-order/GetOrderRequest");
 
         return (GetOrderResponse) getWebServiceTemplate()
-                .marshalSendAndReceive("http://localhost:8080/ws/soapOrders",request);
+                .marshalSendAndReceive("https://simba-order-validation-service.herokuapp.com/ws/soapOrders",request);
     }
 }
