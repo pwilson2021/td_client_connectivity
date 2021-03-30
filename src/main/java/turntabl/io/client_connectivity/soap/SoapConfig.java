@@ -25,7 +25,7 @@ public class SoapConfig {
     @Bean
     public SoapClient orderClient(Jaxb2Marshaller marshaller) {
         SoapClient client = new SoapClient();
-        client.setDefaultUri("http://localhost:8080/ws");
+        client.setDefaultUri("https://simba-order-validation-service.herokuapp.com/ws");
 //        client.setDefaultUri("https://order-validation.herokuapp.com/ws");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
