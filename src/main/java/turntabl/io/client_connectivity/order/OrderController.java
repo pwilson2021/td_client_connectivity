@@ -14,7 +14,7 @@ import turntabl.io.client_connectivity.product.ProductService;
 import turntabl.io.client_connectivity.soap.SoapClient;
 import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
-
+import turntabl.io.clientconnectivity.wsdl.GetOrderResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +57,7 @@ public class OrderController {
     public List<Order> getOrders() { return orderService.getOrders() ;}
 
     @PostMapping
-    public void registerNewOrder(@RequestBody OrderRequest orderRequest) throws JsonProcessingException {
+    public GetOrderResponse registerNewOrder(@RequestBody OrderRequest orderRequest) throws JsonProcessingException {
         User user = userService.findUserById(orderRequest.getUser_id());
         Portfolio portfolio = portfolioService.findPortfolioById(orderRequest.getPortfolio_id());
         Product product = productService.findProductById(orderRequest.getProduct_id());
@@ -72,7 +72,9 @@ public class OrderController {
 
         int orderId = orderService.addNewOrder(order);
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("New order created:  "+orderId));
-        soapClient.orderResponse(orderId,orderRequest.getUser_id(),orderRequest.getProduct_id(),orderRequest.getPortfolio_id());
+        GetOrderResponse soapResponse = soapClient.orderResponse(orderId,orderRequest.getUser_id(),orderRequest.getProduct_id(),orderRequest.getPortfolio_id());
+        System.out.println(soapResponse);
+        return soapResponse;
     }
 
 
