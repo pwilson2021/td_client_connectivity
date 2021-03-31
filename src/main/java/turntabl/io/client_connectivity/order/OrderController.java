@@ -97,7 +97,7 @@ public class OrderController {
         orderService.updateOrder(orderId, price, quantity, orderStatus);
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString("Order Updated:  "+orderId.toString()));
         String report = "order with id "+orderId +" updated registered";
-        template.convertAndSend(topic.getTopic(), report);
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
     }
 
     @GetMapping("get_user_orders/{userId}")

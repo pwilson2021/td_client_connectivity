@@ -52,9 +52,9 @@ public class UserController {
             @RequestParam(required = false) String firstname,
             @RequestParam(required = false) String lastname,
             @RequestParam(required = false) String email
-    ) {
+    ) throws JsonProcessingException{
         userService.updateUser(userId, firstname, lastname, email);
         String report = "order with id "+userId +" updated registered";
-        template.convertAndSend(topic.getTopic(), report);
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
         return "User details updated";}
 }
