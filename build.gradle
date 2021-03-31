@@ -22,7 +22,7 @@ bootJar {
 
 task genJaxb {
 	ext.sourcesDir = "src/main/java"
-	ext.schema = "http://localhost:8080/ws/soapOrders.wsdl"
+	ext.schema = "https://simba-order-validation-service.herokuapp.com/ws/soapOrders.wsdl"
 
 	outputs.dir sourcesDir
 

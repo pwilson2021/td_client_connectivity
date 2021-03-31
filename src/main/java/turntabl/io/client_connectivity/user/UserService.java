@@ -28,6 +28,7 @@ public class UserService {
         if(userOptional.isPresent()) {
             throw new IllegalStateException("Email taken");
         }
+        user.setFunds(1000.00);
         userRepository.save(user);
     }
 

@@ -16,7 +16,7 @@ import turntabl.io.client_connectivity.user.User;
 import turntabl.io.client_connectivity.user.UserService;
 
 
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -101,6 +101,7 @@ public class OrderController {
     @GetMapping("get_user_orders/{userId}")
     public Set<Order> getUserOrders(@PathVariable(required = false) int userId) {
         User user = userService.findUserById(userId);
-        return user.getOrders();
+        Set<Order> orders = user.getOrders();
+        return orders;
     }
 }
