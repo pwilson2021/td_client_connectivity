@@ -56,6 +56,9 @@ public class Order extends DateAudit {
     @Column(name = "qtyFulfilled", nullable = true, columnDefinition = "integer default 0")
     private Integer qtyFulfilled;
 
+    @Transient
+    private String ticker;
+
     public Order(double price, int quantity, String order_type, String order_status, User user, Portfolio portfolio, Product product) {
         this.price = price;
         this.quantity = quantity;
@@ -69,6 +72,7 @@ public class Order extends DateAudit {
     public Order() {
 
     }
+
 
     public int getId() {
         return id;
@@ -120,5 +124,9 @@ public class Order extends DateAudit {
 
     public void setQtyFulfilled(Integer qtyFulfilled) {
         this.qtyFulfilled = qtyFulfilled;
+    }
+
+    public String getTicker() {
+        return this.getProduct().getTicker();
     }
 }
