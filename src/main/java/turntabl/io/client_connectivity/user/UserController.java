@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import turntabl.io.client_connectivity.reporting.ReportingModel;
 
+import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin
@@ -31,11 +33,15 @@ public class UserController {
     public List<User> getUser() { return userService.getUsers(); }
 
     @PostMapping
-    public String registerNewUser(@RequestBody User user) throws JsonProcessingException {
+    public HashMap<String, Object> registerNewUser(@RequestBody User user) throws JsonProcessingException {
         userService.addNewUser(user);
         String report = "new user registered"+user.toString();
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
-        return "User registration successful";
+
+        HashMap<String , Object> response = new HashMap<>();
+        response.put("code", HttpStatus.OK);
+        response.put("messages", "User registration successful");
+        return response;
     }
 
 //    @DeleteMapping(path = "{userId}")
