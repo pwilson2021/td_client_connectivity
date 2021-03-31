@@ -46,9 +46,9 @@ public class PortfolioController {
         Portfolio portfolio = new Portfolio(portfolioRequest.getName(), user);
         portfolioService.addNewPortfolio(portfolio);
 
-        String report = "new portfolio registered"+portfolio.toString();
+        String report = "new portfolio registered  "+portfolio.toString();
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
-        template.convertAndSend(topic.getTopic(), report);
+//        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
     }
 
     @GetMapping(path = "{portfolioId}")
@@ -65,11 +65,13 @@ public class PortfolioController {
 //    }
 
     @PutMapping(path = "{portfolioId}")
-    public void updatePortfolio(
+    public void updatePortfolio (
             @PathVariable("portfolioId") Integer portfolioId,
             @RequestParam(required = false) String name
-    ) {
+    ) throws JsonProcessingException {
         portfolioService.updatePortfolio(name, portfolioId);
+        String report = "new portfolio registered  "+portfolioId;
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
     }
 
     @GetMapping("get_user_portfolios/{userId}")

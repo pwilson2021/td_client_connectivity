@@ -36,25 +36,23 @@ public class ProductController {
         productService.addNewProduct(product);
         String report = "new product registered"+product.toString();
         template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
-        template.convertAndSend(topic.getTopic(), report);
+//        template.convertAndSend(topic.getTopic(), report);
     }
 
     @DeleteMapping(path = "{productId}")
-    public void deleteStudent(@PathVariable("productId") Integer productId) {
+    public void deleteStudent(@PathVariable("productId") Integer productId)  throws JsonProcessingException {
         productService.deleteProducts(productId);
-        report.setTitle("client connectivity: product");
-        report.setMsg(" Product deleted. product ID: "+productId);
-        template.convertAndSend(topic.getTopic(), report);
+        String report = "new product registered "+ productId;
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
     }
 
 
     public void updateProduct(
             @PathVariable("productId") Integer productId,
             @RequestParam(required = false) String ticker
-    ) {
+    ) throws JsonProcessingException {
         productService.updateProduct(productId, ticker);
-        report.setTitle("client connectivity: product");
-        report.setMsg("Product updated: product ID: "+ productId+ " "+ ticker);
-        template.convertAndSend(topic.getTopic(), report);
+        String report = "new product registered "+ productId;
+        template.convertAndSend(topic.getTopic(), mapper.writeValueAsString(report));
     }
 }
